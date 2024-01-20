@@ -1,13 +1,11 @@
 ﻿
 @{
     var currentDateTime = DateTime.UtcNow;
-
-    var allUrls = ViewData["AllUrls"] as List<string>;
 }
 
-<h4>@ViewData["ShortenedUrl"]</h4>
+<h4>@ViewBag.ShortenedUrl</h4>
 
-@foreach(var url in allUrls)
+@foreach (var url in @ViewBag.allUrls)
 {
     <h3>@url</h3>
 }

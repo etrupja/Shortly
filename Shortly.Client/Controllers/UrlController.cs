@@ -7,8 +7,8 @@ namespace Shortly.Client.Controllers
     {
         public IActionResult Index()
         {
-            ViewData["ShortenedUrl"] = "This is just a short url";
-            ViewData["AllUrls"] = new List<string>() { "Url 1", "Url 2", "Url 3"};
+            ViewBag.ShortenedUrl = "This is just a short url";
+            ViewBag.AllUrls = new List<string>() { "Url 1", "Url 2", "Url 3"};
 
             return View();
         }
