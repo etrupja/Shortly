@@ -27,11 +27,16 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterVM());
         }
 
         public IActionResult RegisterUser(RegisterVM registerVM)
         {
+            if(!ModelState.IsValid)
+            {
+                return View("Register", registerVM);
+            }
+
             return RedirectToAction("Index", "Home");
         }
     }
