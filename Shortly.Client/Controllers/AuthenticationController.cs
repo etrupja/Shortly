@@ -29,5 +29,10 @@ namespace Shortly.Client.Controllers
         {
             return View();
         }
+
+        public IActionResult RegisterUser(RegisterVM registerVM)
+        {
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
