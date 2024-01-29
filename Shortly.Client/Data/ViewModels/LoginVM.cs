@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Shortly.Client.Helpers.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shortly.Client.Data.ViewModels
 {
     public class LoginVM
     {
         [Required(ErrorMessage = "Email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
-        [RegularExpression(@"^\S+@\S+\.\S+$", ErrorMessage = "Invalid email address")]
+        [CustomEmailValidator(ErrorMessage = "Email address is not valid (custom)")]
         public string EmailAddress { get; set; }
 
 
