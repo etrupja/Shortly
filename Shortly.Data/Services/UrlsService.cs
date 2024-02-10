@@ -16,10 +16,30 @@ namespace Shortly.Data.Services
             _context = context;
         }
 
+        public Url GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Url> GetUrls()
         {
             var allUrls = _context.Urls.Include(n => n.User).ToList();
             return allUrls;
+        }
+
+        public Url Add(Url url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Url Update(int id, Url url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
