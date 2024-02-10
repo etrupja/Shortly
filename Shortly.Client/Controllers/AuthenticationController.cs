@@ -2,24 +2,21 @@
 using Microsoft.EntityFrameworkCore;
 using Shortly.Client.Data.ViewModels;
 using Shortly.Data;
+using Shortly.Data.Services;
 
 namespace Shortly.Client.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private AppDbContext _context;
-        public AuthenticationController(AppDbContext context)
+        private IUsersService _usersService;
+        public AuthenticationController(IUsersService usersService)
         {
-            _context = context;
+            _usersService = usersService;
         }
 
         public IActionResult Users()
         {
-            var users = _context
-                .Users
-                .Include(n => n.Urls)
-                .ToList();
-
+            var users = _usersService.GetUsers();
             return View(users);
         }
 
