@@ -4,6 +4,18 @@
     ViewData["Title"] = "Welcome";
 }
 
+@{
+    if (TempData["Message"] != null)
+    {
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+}
+
 <section class="landing py-5">
     <div class="container">
         <div class="row align-items-center">
