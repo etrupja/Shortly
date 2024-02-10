@@ -36,12 +36,11 @@ namespace Shortly.Client.Controllers
 
         public IActionResult Remove(int id)
         {
-            return View();
-        }
+            var url = _context.Urls.FirstOrDefault(n => n.Id == id);
+            _context.Urls.Remove(url);
+            _context.SaveChanges();
 
-        public IActionResult Remove(int userId, int linkId)
-        {
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }
