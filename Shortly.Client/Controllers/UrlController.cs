@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shortly.Client.Data.ViewModels;
 using Shortly.Data;
+using Shortly.Data.Models;
 using Shortly.Data.Services;
 
 namespace Shortly.Client.Controllers
@@ -9,31 +11,19 @@ namespace Shortly.Client.Controllers
     public class UrlController : Controller
     {
         private IUrlsService _urlsService;
-        public UrlController(IUrlsService urlsService) 
+        private readonly IMapper _mapper;
+        public UrlController(IUrlsService urlsService, IMapper mapper) 
         { 
             _urlsService = urlsService;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            var allUrls = _urlsService.GetUrls()
-                .Select(url => new GetUrlVM()
-                {
-                    Id = url.Id,
-                    OriginalLink = url.OriginalLink,
-                    ShortLink = url.ShortLink,
-                    NrOfClicks = url.NrOfClicks,
-                    UserId = url.UserId,
+            var allUrls = _urlsService.GetUrls();
+            var mappedAllUrls = _mapper.Map<List<Url>, List<GetUrlVM>>(allUrls);
 
-                    User = url.User != null ? new GetUserVM()
-                    {
-                        Id = url.User.Id,
-                        FullName = url.User.FullName
-                    } : null
-                })
-                .ToList();
-
-            return View(allUrls);
+            return View(mappedAllUrls);
         }
 
         public IActionResult Create()
