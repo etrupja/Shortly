@@ -10,13 +10,12 @@ using System.Threading.Tasks;
 
 namespace Shortly.Data
 {
-    public class AppDbContext:IdentityDbContext<IdentityUser>
+    public class AppDbContext:IdentityDbContext<AppUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
         public DbSet<Url> Urls { get; set; }
-        public DbSet<User> Users { get; set; }
     }
 }
