@@ -77,6 +77,14 @@ namespace Shortly.Client.Controllers
                 return View("Register", registerVM);
             }
 
+            //Check if the user exists
+            var user = await _userManager.FindByEmailAsync(registerVM.EmailAddress);
+            if(user != null)
+            {
+                ModelState.AddModelError("", "Email address is already in use.");
+                return View("Register", registerVM);
+            }
+
             var newUser = new AppUser()
             {
                 Email = registerVM.EmailAddress,
@@ -91,6 +99,14 @@ namespace Shortly.Client.Controllers
 
                 //Login the user
                 await _signInManager.PasswordSignInAsync(newUser, registerVM.Password, false, false);
+            } else
+            {
+                foreach (var error in userCreated.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View("Register", registerVM);
             }
 
             return RedirectToAction("Index", "Home");
