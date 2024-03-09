@@ -40,20 +40,32 @@
 
                     </ul>
                 </div>
-            
-                <a class="btn btn-outline-success my-2 my-sm-0 btn-login"
-                   asp-controller="Authentication"
-                   asp-action="Login">
-                    Log in
-                </a>
-                
-                <span id="spaceSpan"></span>
 
-                <a class="btn btn-outline-primary my-2 my-sm-0 btn-register"
-                   asp-controller="Authentication"
-                   asp-action="Register">
-                    Register
-                </a>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-outline-success my-2 my-sm-0 btn-login"
+                       asp-controller="Authentication"
+                       asp-action="Login">
+                        Log in
+                    </a>
+
+                    <span id="spaceSpan"></span>
+
+                    <a class="btn btn-outline-primary my-2 my-sm-0 btn-register"
+                       asp-controller="Authentication"
+                       asp-action="Register">
+                        Register
+                    </a>
+                } else
+                {
+                    <form asp-controller="Authentication" asp-action="Logout" >
+                        <button class="btn btn-outline-danger my-2 my-sm-0">
+                            <i class="bi bi-box-arrow-in-right"></i> Log out <b>@User.Identity.Name</b>
+                        </button>
+                    </form>
+                }
+
+                
             </div>
         </nav>
     </header>
