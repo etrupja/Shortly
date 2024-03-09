@@ -34,12 +34,15 @@
                                    asp-controller="Url"
                                    asp-action="Index">All links</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-area=""
-                                   asp-controller="Authentication"
-                                   asp-action="Users">Users</a>
-                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-area=""
+                                       asp-controller="Authentication"
+                                       asp-action="Users">Users</a>
+                                </li>
+                            }
                         </ul>
                     }
                 </div>
