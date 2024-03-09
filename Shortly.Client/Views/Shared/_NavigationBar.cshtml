@@ -1,0 +1,65 @@
+﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Shrtly</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark"
+                           asp-area=""
+                           asp-controller="Home"
+                           asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark"
+                           asp-area=""
+                           asp-controller="Url"
+                           asp-action="Index">All links</a>
+                    </li>
+                    @if (User.IsInRole(Role.Admin))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               asp-area=""
+                               asp-controller="Authentication"
+                               asp-action="Users">Users</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a class="btn btn-outline-success my-2 my-sm-0 btn-login"
+               asp-controller="Authentication"
+               asp-action="Login">
+                Log in
+            </a>
+
+            <span id="spaceSpan"></span>
+
+            <a class="btn btn-outline-primary my-2 my-sm-0 btn-register"
+               asp-controller="Authentication"
+               asp-action="Register">
+                Register
+            </a>
+        }
+        else
+        {
+            <form asp-controller="Authentication" asp-action="Logout">
+                <button class="btn btn-outline-danger my-2 my-sm-0">
+                    <i class="bi bi-box-arrow-in-right"></i> Log out <b>@User.Identity.Name</b>
+                </button>
+            </form>
+        }
+
+
+    </div>
+</nav>
