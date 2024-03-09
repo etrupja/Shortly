@@ -34,7 +34,7 @@
                                    asp-controller="Url"
                                    asp-action="Index">All links</a>
                             </li>
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole(Role.Admin))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark"
