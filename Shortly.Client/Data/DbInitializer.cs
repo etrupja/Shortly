@@ -1,41 +1,63 @@
-﻿using Shortly.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Shortly.Data;
 using Shortly.Data.Models;
 
 namespace Shortly.Client.Data
 {
     public static class DbInitializer
     {
-        public static void SeedDefaultData(IApplicationBuilder applicationBuilder)
+        public static async Task SeedDefaultUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
         {
-            using(var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
+            using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
-                var dbContext = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-                if(!dbContext.Users.Any())
+
+                //Simple user related data
+                var simpleUserRole = "User";
+                var simpleUserEmail = "user@shrtly.com";
+
+                if (!await roleManager.RoleExistsAsync(simpleUserRole))
+                    await roleManager.CreateAsync(new IdentityRole() { Name = simpleUserRole });
+
+                if(await userManager.FindByEmailAsync(simpleUserEmail) == null)
                 {
-                    dbContext.Users.Add(new AppUser()
+                    var simpleUser = new AppUser()
                     {
-                        FullName = "Ervis Trupja",
-                        Email = "ervis@trupja.com"
-                    });
+                        FullName = "Simple User",
+                        UserName = "simple-user",
+                        Email = simpleUserEmail,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(simpleUser, "Coding@1234?");
 
-                    dbContext.SaveChanges();
+                    //Add user to the role
+                    await userManager.AddToRoleAsync(simpleUser, simpleUserRole);
                 }
 
-                if (!dbContext.Urls.Any())
+                //Admin user related data
+                var adminUserRole = "Admin";
+                var adminUserEmail = "admin@shrtly.com";
+
+                if (!await roleManager.RoleExistsAsync(adminUserRole))
+                    await roleManager.CreateAsync(new IdentityRole() { Name = adminUserRole });
+
+                if (await userManager.FindByEmailAsync(adminUserEmail) == null)
                 {
-                    dbContext.Urls.Add(new Url()
+                    var adminUser = new AppUser()
                     {
-                        OriginalLink = "https://dotnethow.net",
-                        ShortLink = "dnh",
-                        NrOfClicks = 20,
-                        DateCreated = DateTime.Now,
+                        FullName = "Admin User",
+                        UserName = "admin-user",
+                        Email = adminUserEmail,
+                        EmailConfirmed = true
+                    };
+                    await userManager.CreateAsync(adminUser, "Coding@1234?");
 
-                        UserId = dbContext.Users.First().Id
-                    });
-
-                    dbContext.SaveChanges();
+                    //Add user to the role
+                    await userManager.AddToRoleAsync(adminUser, adminUserRole);
                 }
+
             }
         }
     }
