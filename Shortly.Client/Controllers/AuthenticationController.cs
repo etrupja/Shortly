@@ -157,6 +157,7 @@ namespace Shortly.Client.Controllers
             if (user != null)
             {
                 var userToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var userConfirmationLink = Url.Action("EmailConfirmationVerified", "Authentication", new { userId = user.Id, userConfirmationToken = userToken }, Request.Scheme);
 
                 //3. Send the email
                 var apiKey = _configuration["SendGrid:ShortlyKey"];
@@ -166,11 +167,11 @@ namespace Shortly.Client.Controllers
                 var emailSubject = "[Shortly] Verify your account";
                 var toEmailAddress = new EmailAddress(confirmEmailLoginVM.EmailAddress);
 
-                var emailContentTxt = "Hello from Shortly App. Please, click this link to verify your account ";
-                var emailContentHtml = "Hello from Shortly App. Please, click this link to verify your account ";
+                var emailContentTxt = $"Hello from Shortly App. Please, click this link to verify your account: {userConfirmationLink}";
+                var emailContentHtml = $"Hello from Shortly App. Please, click this link to verify your account: <a href=\"{userConfirmationLink}\"> Verify your account </a> ";
 
                 var emailRequest = MailHelper.CreateSingleEmail(fromEmailAddress, toEmailAddress, emailSubject, emailContentTxt, emailContentHtml);
-                var emailResponse = sendGridClient.SendEmailAsync(emailRequest);
+                var emailResponse = await sendGridClient.SendEmailAsync(emailRequest);
 
                 TempData["EmailConfirmation"] = "Thank you! Please, check your email to verify your account";
 
@@ -179,6 +180,21 @@ namespace Shortly.Client.Controllers
 
             ModelState.AddModelError("", $"Email address {confirmEmailLoginVM.EmailAddress} does not exist");
             return View("EmailConfirmation", confirmEmailLoginVM);
+        }
+
+        public async Task<IActionResult> EmailConfirmationVerified(string userId, string userConfirmationToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, userConfirmationToken);
+
+            TempData["EmailConfirmationVerified"] = "Thank you! Your account has been confirmed. You can now log in!";
+            return RedirectToAction("Index", "Home");
         }
     }
 }
