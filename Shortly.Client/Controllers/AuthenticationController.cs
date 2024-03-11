@@ -8,6 +8,8 @@ using Shortly.Client.Helpers.Roles;
 using Shortly.Data;
 using Shortly.Data.Models;
 using Shortly.Data.Services;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Shortly.Client.Controllers
 {
@@ -42,13 +44,13 @@ namespace Shortly.Client.Controllers
 
         public async Task<IActionResult> LoginSubmitted(LoginVM loginVM)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View("Login", loginVM);
             }
 
             var user = await _userManager.FindByEmailAsync(loginVM.EmailAddress);
-            if(user != null)
+            if (user != null)
             {
                 var userPasswordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
                 if (userPasswordCheck)
@@ -58,12 +60,14 @@ namespace Shortly.Client.Controllers
                     if (userLoggedIn.Succeeded)
                     {
                         return RedirectToAction("Index", "Home");
-                    } else if (userLoggedIn.IsNotAllowed)
+                    }
+                    else if (userLoggedIn.IsNotAllowed)
                     {
                         return RedirectToAction("EmailConfirmation");
-                    } else if (userLoggedIn.RequiresTwoFactor)
+                    }
+                    else if (userLoggedIn.RequiresTwoFactor)
                     {
-                        return RedirectToAction("TwoFactorConfirmation", new { loggedInUserId = user.Id});
+                        return RedirectToAction("TwoFactorConfirmation", new { loggedInUserId = user.Id });
                     }
 
                     else
@@ -71,11 +75,12 @@ namespace Shortly.Client.Controllers
                         ModelState.AddModelError("", "Invalid login attempt. Please, check your username and password");
                         return View("Login", loginVM);
                     }
-                } else
+                }
+                else
                 {
                     await _userManager.AccessFailedAsync(user);
 
-                    if(await _userManager.IsLockedOutAsync(user))
+                    if (await _userManager.IsLockedOutAsync(user))
                     {
                         ModelState.AddModelError("", "Your account is locked, please try again in 10 mins");
                         return View("Login", loginVM);
@@ -97,14 +102,14 @@ namespace Shortly.Client.Controllers
 
         public async Task<IActionResult> RegisterUser(RegisterVM registerVM)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View("Register", registerVM);
             }
 
             //Check if the user exists
             var user = await _userManager.FindByEmailAsync(registerVM.EmailAddress);
-            if(user != null)
+            if (user != null)
             {
                 ModelState.AddModelError("", "Email address is already in use.");
                 return View("Register", registerVM);
@@ -125,7 +130,8 @@ namespace Shortly.Client.Controllers
 
                 //Login the user
                 await _signInManager.PasswordSignInAsync(newUser, registerVM.Password, false, false);
-            } else
+            }
+            else
             {
                 foreach (var error in userCreated.Errors)
                 {
@@ -189,7 +195,7 @@ namespace Shortly.Client.Controllers
         {
             var user = await _userManager.FindByIdAsync(userId);
 
-            if(user == null)
+            if (user == null)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -205,11 +211,23 @@ namespace Shortly.Client.Controllers
             // 1. Get the user
             var user = await _userManager.FindByIdAsync(loggedInUserId);
 
-            if(user != null)
+            if (user != null)
             {
                 var userToken = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
                 // 2. Send the SMS (set up twilio)
+                string twilioPhoneNumber = _configuration["Twilio:PhoneNumber"];
+                string twilioSID = _configuration["Twilio:SID"];
+                string twilioToken = _configuration["Twilio:Token"];
+
+                TwilioClient.Init(twilioSID, twilioToken);
+
+                var message = MessageResource.Create(
+                        body: $"This is your verification code: {userToken}",
+                        from: new Twilio.Types.PhoneNumber(twilioPhoneNumber),
+                        to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
+                    );
+
                 var confirm2FALoginVM = new Confirm2FALoginVM()
                 {
                     UserId = loggedInUserId
@@ -220,6 +238,27 @@ namespace Shortly.Client.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> TwoFactorConfirmationVerified(Confirm2FALoginVM confirm2FALoginVM)
+        {
+            var user = await _userManager.FindByIdAsync(confirm2FALoginVM.UserId);
+
+            if(user != null)
+            {
+                var tokenVerification = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", confirm2FALoginVM.UserConfirmationCode);
+
+                if (tokenVerification)
+                {
+                    var tokenSignIn = await _signInManager.TwoFactorSignInAsync("Phone", confirm2FALoginVM.UserConfirmationCode, false, false);
+
+                    if (tokenSignIn.Succeeded)
+                        return RedirectToAction("Index", "Home");
+                }
+            }
+
+            ModelState.AddModelError("", "Confirmation code is not correct");
+            return View(confirm2FALoginVM);
         }
     }
 }

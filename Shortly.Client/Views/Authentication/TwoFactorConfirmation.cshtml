@@ -12,9 +12,11 @@
             <div class="col-md-8 offset-md-2">
 
                 <form asp-controller="Authentication"
-                      asp-action="TwoFactorConfirm">
-                    
-                      <input asp-for="UserId" hidden />
+                      asp-action="TwoFactorConfirmationVerified">
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                      
+                    <input asp-for="UserId" hidden />
 
                     <div class="form-group mb-3">
                         <label for="twoFactorAuth">Verification code</label>
