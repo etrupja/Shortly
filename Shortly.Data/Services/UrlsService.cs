@@ -68,5 +68,18 @@ namespace Shortly.Data.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public Url GetOriginalUrl(string shortUrl)
+        {
+            var dbUrl = _context.Urls.FirstOrDefault(n => n.ShortLink == shortUrl);
+            return dbUrl;
+        }
+
+        public void IncrementNumberOfClicks(int shortUrlId)
+        {
+            var dbUrl = _context.Urls.FirstOrDefault(n => n.Id == shortUrlId);
+            dbUrl.NrOfClicks++;
+            _context.SaveChanges();
+        }
     }
 }
