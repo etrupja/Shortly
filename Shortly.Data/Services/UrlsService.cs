@@ -69,17 +69,17 @@ namespace Shortly.Data.Services
             }
         }
 
-        public Url GetOriginalUrl(string shortUrl)
+        public async Task<Url> GetOriginalUrlAsync(string shortUrl)
         {
-            var dbUrl = _context.Urls.FirstOrDefault(n => n.ShortLink == shortUrl);
+            var dbUrl = await _context.Urls.FirstOrDefaultAsync(n => n.ShortLink == shortUrl);
             return dbUrl;
         }
 
-        public void IncrementNumberOfClicks(int shortUrlId)
+        public async Task IncrementNumberOfClicksAsync(int shortUrlId)
         {
-            var dbUrl = _context.Urls.FirstOrDefault(n => n.Id == shortUrlId);
+            var dbUrl = await _context.Urls.FirstOrDefaultAsync(n => n.Id == shortUrlId);
             dbUrl.NrOfClicks++;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
