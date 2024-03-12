@@ -18,5 +18,17 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 //Add the redirect logic
+app.MapGet("/{path}", async (string path, IUrlsService urlService) =>
+{
+    var urlObj = urlService.GetOriginalUrl(path);
+    if (urlObj != null)
+    {
+        urlService.IncrementNumberOfClicks(urlObj.Id);
+
+        return Results.Redirect(urlObj.OriginalLink);
+    }
+
+    return Results.Redirect("/");
+});
 
 app.Run();
