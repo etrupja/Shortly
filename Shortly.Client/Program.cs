@@ -59,8 +59,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
-        options.ClientId = "abcd";
-        options.ClientSecret = "abcd";
+        options.ClientId = builder.Configuration["Auth:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"];
     });
 
 var app = builder.Build();

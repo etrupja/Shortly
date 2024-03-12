@@ -265,5 +265,20 @@ namespace Shortly.Client.Controllers
             ModelState.AddModelError("", "Confirmation code is not correct");
             return View(confirm2FALoginVM);
         }
+
+
+        public IActionResult ExternalLogin(string provider, string returnUrl = "")
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Authentication", new { ReturnUrl = returnUrl });
+
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+            return new ChallengeResult(provider, properties);
+        }
+
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "", string remoteError = "")
+        {
+            return View();
+        }
     }
 }
