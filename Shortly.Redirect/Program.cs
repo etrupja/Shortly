@@ -20,10 +20,10 @@ app.UseHttpsRedirection();
 //Add the redirect logic
 app.MapGet("/{path}", async (string path, IUrlsService urlService) =>
 {
-    var urlObj = urlService.GetOriginalUrl(path);
+    var urlObj = await urlService.GetOriginalUrlAsync(path);
     if (urlObj != null)
     {
-        urlService.IncrementNumberOfClicks(urlObj.Id);
+        await urlService.IncrementNumberOfClicksAsync(urlObj.Id);
 
         return Results.Redirect(urlObj.OriginalLink);
     }
