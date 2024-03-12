@@ -39,7 +39,12 @@ namespace Shortly.Client.Controllers
 
         public async Task<IActionResult> Login()
         {
-            return View(new LoginVM());
+            var loginVM = new LoginVM()
+            {
+                Schemes = await _signInManager.GetExternalAuthenticationSchemesAsync()
+            };
+
+            return View(loginVM);
         }
 
         public async Task<IActionResult> LoginSubmitted(LoginVM loginVM)

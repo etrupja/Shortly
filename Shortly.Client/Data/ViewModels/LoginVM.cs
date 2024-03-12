@@ -1,4 +1,5 @@
-﻿using Shortly.Client.Helpers.Validators;
+﻿using Microsoft.AspNetCore.Authentication;
+using Shortly.Client.Helpers.Validators;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shortly.Client.Data.ViewModels
@@ -13,5 +14,8 @@ namespace Shortly.Client.Data.ViewModels
         [Required(ErrorMessage = "Password is required")]
         [MinLength(5, ErrorMessage ="Password must be at least 5 characters")]
         public string Password { get; set; }
+
+        //Third-party login providers
+        public IEnumerable<AuthenticationScheme> Schemes { get; set; }
     }
 }
