@@ -1,0 +1,52 @@
+﻿@model RegisterVM
+
+@{
+    ViewData["Title"] = "Sign up for a new account";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h4 class="form-header">Sign up for a new account</h4>
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+
+                <form asp-controller="Authentication"
+                      asp-action="RegisterUser">
+
+                     @* Add summury error placeholder  *@
+                     <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="form-group mb-3">
+                        <label for="fullName">Fullname</label>
+                        <input asp-for="FullName" type="text" class="form-control" id="fullName" placeholder="Enter full name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="emailAddress">Email address</label>
+                        <input asp-for="EmailAddress" type="email" class="form-control" id="emailAddress" placeholder="Enter email" />
+                        <small id="emailAddressSm" class="form-text text-muted">We'll never share your email with anyone else.</small> <br />
+                        <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="password">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Enter password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="cofirmPassword">Confirm password</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" id="confirmPassword" placeholder="Re-enter password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-success mt-2 btn-register">
+                        Register
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

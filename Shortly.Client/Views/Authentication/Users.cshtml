@@ -1,0 +1,59 @@
+﻿
+@model List<AppUser>;
+
+@{
+    ViewData["Title"] = "All users";
+}
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-1 g-4">
+
+        @foreach(var user in Model)
+        {
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@user.FullName</h5>
+                        <p class="card-text">This user has created @user.Urls.Count link(s) and has a total of @user.Urls.Sum(n => n.NrOfClicks) click(s).</p>
+
+                        <p class="d-inline-flex gap-1">
+                            <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample1" role="button" aria-expanded="false" aria-controls="collapseExample1">
+                                Show details
+                            </a>
+                        </p>
+                        <div class="collapse" id="collapseExample1">
+                            <div class="card card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Original link</th>
+                                            <th>Short link</th>
+                                            <th>Number of clicks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(var userUrl in @user.Urls)
+                                        {
+                                            <tr>
+                                                <td>@userUrl.OriginalLink</td>
+                                                <td>@userUrl.ShortLink</td>
+                                                <td>@userUrl.NrOfClicks</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            @user.Urls.Count link(s), @user.Urls.Sum(n => n.NrOfClicks) click(s)
+                            </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

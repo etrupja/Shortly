@@ -1,0 +1,55 @@
+﻿@model List<GetUrlVM>;
+
+@{
+    ViewData["Title"] = "All short links";
+}
+
+<div class="container">
+    <a  class="btn btn-outline-success"
+        asp-controller="Home"
+        asp-action="Index">
+        Add New
+    </a>
+</div>
+
+<div class="container">
+    <table class="table table-stripped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Original link</th>
+                <th scope="col">Shortened link</th>
+                <th scope="col">Number of clicks</th>
+                @if (User.IsInRole(Role.Admin))
+                {
+                    <th scope="col">User</th>
+                }
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach(var url in Model)
+            {
+                <tr>
+                    <td>@url.Id</td>
+                    <td>@url.OriginalLink</td>
+                    <td>@url.ShortLink</td>
+                    <td>@url.NrOfClicks</td>
+                    @if (User.IsInRole(Role.Admin))
+                    {
+                        <td>@(url.User != null ? url.User.FullName : "-")</td>
+                    }
+                    <td>
+                        <a class="btn btn-outline-danger" 
+                        asp-controller="Url" 
+                        asp-action="Remove"
+                        asp-route-id="@url.Id">
+                            Remove
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

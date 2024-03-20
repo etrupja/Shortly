@@ -1,8 +1,76 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PostUrlVM
+
+@{
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{
+    if (TempData["Message"] != null)
+    {
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+
+    if (TempData["EmailConfirmation"] != null)
+    {
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @TempData["EmailConfirmation"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+
+    if (TempData["EmailConfirmationVerified"] != null)
+    {
+        <div class="container">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success!</strong> @TempData["EmailConfirmationVerified"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+}
+
+<section class="landing py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-4">
+                <img src="~/img/welcome-img.png" class="img-fluid" alt="" />
+            </div>
+            <div class="col-lg-8">
+                <h1 class="display-4">More than just shorter links</h1>
+                <p class="lead">
+                    Build your brand’s recognition and get detailed insights on how your links are performing.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="container">
+        <div class="url-shorten-feature">
+            <form class="url-shorten-form" id="url-shorten-form" 
+            asp-controller="Home"
+            asp-action="ShortenUrl">
+                <div>
+                    <input 
+                        asp-for="Url" 
+                        type="text" 
+                        class="url-input"  
+                        placeholder="Shorten a link here..." 
+                        autocomplete="off" />
+
+                    <span asp-validation-for="Url" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-lg" style="">Shorten It!</button>
+            </form>
+            <div class="url-shorten-results"></div>
+        </div>
+    </div>
+</section>
